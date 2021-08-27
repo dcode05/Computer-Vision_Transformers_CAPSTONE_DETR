@@ -18,4 +18,28 @@
    The question here however is why did they choose 1/4th resolution, why not 1/8 or 1/2 or even 1? 
    
    Answer4: the final step left in the image segmentation pipeline is computing Argmax of the each pixel assigning a unique mask to it. The question here however is how does the model find which pixel in the image[3,H, W] corresponds to which pixel in the mask logits[N, H/4, W/4]?
-   
+  
+#This is the code that is the only addition to panoptic model verses plain DETR model
+
+    (bbox_attention): MHAttentionMap(
+      (dropout): Dropout(p=0.0, inplace=False)
+      (q_linear): Linear(in_features=256, out_features=256, bias=True)
+      (k_linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (mask_head): MaskHeadSmallConv(
+        (lay1): Conv2d(264, 264, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (gn1): GroupNorm(8, 264, eps=1e-05, affine=True)
+        (lay2): Conv2d(264, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (gn2): GroupNorm(8, 128, eps=1e-05, affine=True)
+        (lay3): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (gn3): GroupNorm(8, 64, eps=1e-05, affine=True)
+        (lay4): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (gn4): GroupNorm(8, 32, eps=1e-05, affine=True)
+        (lay5): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (gn5): GroupNorm(8, 16, eps=1e-05, affine=True)
+        (out_lay): Conv2d(16, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (adapter1): Conv2d(1024, 128, kernel_size=(1, 1), stride=(1, 1))
+        (adapter2): Conv2d(512, 64, kernel_size=(1, 1), stride=(1, 1))
+        (adapter3): Conv2d(256, 32, kernel_size=(1, 1), stride=(1, 1))
+      )
+    )
